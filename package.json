@@ -1,0 +1,22 @@
+{
+  "name": "devtinder-be",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start" : "node src/App.js",
+    "dev" : "nodemon src/App.js"
+  },
+  "keywords": [
+    "NodeJS",
+    "Javascript",
+    "Backend",
+    "Express",
+    "Mongoose"
+  ],
+  "author": "Abhishek S",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

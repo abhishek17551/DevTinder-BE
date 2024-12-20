@@ -1,26 +1,21 @@
 const express = require('express')
 
 const app = express()
+const {adminAuth,userAuth} = require('./middlewares/auth')
 
-app.get("/user",
-    (req,res,next) => {
+app.all("/admin", adminAuth)
+
+app.get("/admin/getAllData", (req,res) => {
+    res.send('All data sent')
+})
+app.delete("/admin/deleteRecord", (req,res) => {
+    res.send('Record Deleted')
+})
+app.get("/user", userAuth,
+    (req,res) => {
     console.log('Handling the user route 1')
-    res.send('1st response')
-    
-    next()
-},
-(req,res,next) => {
-   
-    console.log('Handling the user route 2')
-    res.send('2nd response')
-    next()
-},
-(req,res) => {
-    console.log('Handling the user route 3')
-    res.send('3rd response')
-},
-       
-)
+   res.send('User 1')
+})
 
 app.get("/wishlist",(req,res) => {
     res.send({productID : '3', name : "Red Tape Shoes"})

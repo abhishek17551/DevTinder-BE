@@ -57,7 +57,7 @@ app.patch('/user', async (req,res) => {
     const userId = req.body.userId
     const data = req.body
     try {
-        const user = await User.findByIdAndUpdate({_id : userId}, data, {returnDocument:'after'})
+        const user = await User.findByIdAndUpdate({_id : userId}, data, {returnDocument:'after',runValidators:true})
         if (!user) {
             return res.status(404).send('User not found');
         }
@@ -89,6 +89,6 @@ connectDB()
     });
   })
   .catch((err) => {
-    console.error("Database cannot be connected!!");
+    console.error("Database cannot be connected!!"+err.message);
   });
 

@@ -4,6 +4,7 @@ const User = require('./models/user')
 const bcrypt = require("bcrypt")
 const { validateSignupData } = require('./utils/validation')
 const cookieParser = require('cookie-parser')
+const { jwt } = require('jsonwebtoken')
 const app = express()
 
 //Applies to all requests to express server
@@ -48,7 +49,10 @@ app.post("/login", async (req,res) => {
 
         const isPasswordValid = await bcrypt.compare(password,loggedInUser.password)
         if(isPasswordValid) {
-            res.cookies("token",)
+            //After successful login, encode jwt token & set cookie 
+            const token = await jwt.sign({_id:loggedInUser._id},"Abhi$hek@1029")
+            res.cookies("token",token)
+
             res.send('Login Successful!')
         } else {
             throw new Error('Invalid Credentials!')
@@ -62,8 +66,17 @@ app.post("/login", async (req,res) => {
 //Get User Profile
 app.get("/profile", async (req,res) => {
  try {
+    //Receive token
     const cookies = req.cookies
-    res.send('Reading Cookie')
+    const {token} = cookies
+
+    //Decode token
+    const decodedMessage = await jwt.verify(token,"Abhi$hek@1029")
+    const {_id} = decodedMessage;
+    
+    //Get user details based on token
+    const user = await User.findById(_id)
+    res.send(user)
  }
  catch(err){
     res.status(400).send('ERROR : '+ err.message)

@@ -3,11 +3,13 @@ const connectDB = require('./config/database')
 const User = require('./models/user')
 const bcrypt = require("bcrypt")
 const { validateSignupData } = require('./utils/validation')
+const cookieParser = require('cookie-parser')
 const app = express()
 
 //Applies to all requests to express server
 //Converts JSON requests on server to JS readable objects  
 app.use(express.json())
+app.use(cookieParser())
 
 
 app.post("/signup", async (req,res)=>{  
@@ -46,6 +48,7 @@ app.post("/login", async (req,res) => {
 
         const isPasswordValid = await bcrypt.compare(password,loggedInUser.password)
         if(isPasswordValid) {
+            res.cookies("token",)
             res.send('Login Successful!')
         } else {
             throw new Error('Invalid Credentials!')
@@ -54,6 +57,17 @@ app.post("/login", async (req,res) => {
     catch(err){
         res.status(400).send('ERROR : '+ err.message)
     }
+})
+
+//Get User Profile
+app.get("/profile", async (req,res) => {
+ try {
+    const cookies = req.cookies
+    res.send('Reading Cookie')
+ }
+ catch(err){
+    res.status(400).send('ERROR : '+ err.message)
+}
 })
 
 //Get user by emailId

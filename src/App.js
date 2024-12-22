@@ -70,12 +70,20 @@ app.get("/profile", async (req,res) => {
     const cookies = req.cookies
     const {token} = cookies
 
+    if(!token){
+        throw new Error('Invalid Token')
+    }
+
     //Decode token
     const decodedMessage = await jwt.verify(token,"Abhi$hek@1029")
     const {_id} = decodedMessage;
     
     //Get user details based on token
     const user = await User.findById(_id)
+
+    if(!user) {
+        throw new Error("User does not exist")
+    }
     res.send(user)
  }
  catch(err){

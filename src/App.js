@@ -51,7 +51,7 @@ app.post("/login", async (req,res) => {
         const isPasswordValid = await bcrypt.compare(password,loggedInUser.password)
         if(isPasswordValid) {
             //After successful login, encode jwt token & set cookie 
-            const token = await jwt.sign({_id:loggedInUser._id},"Abhi$hek@1029")
+            const token = await jwt.sign({_id:loggedInUser._id},"Abhi$hek@1029",{expiresIn : "5h"})
             res.cookie("token",token)
 
             res.send('Login Successful!')

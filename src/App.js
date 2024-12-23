@@ -52,7 +52,7 @@ app.post("/login", async (req,res) => {
         if(isPasswordValid) {
             //After successful login, encode jwt token & set cookie 
             const token = await jwt.sign({_id:loggedInUser._id},"Abhi$hek@1029",{expiresIn : "5h"})
-            res.cookie("token",token)
+            res.cookie("token",token,{expires : new Date(Date.now() + 8*3600000)})
 
             res.send('Login Successful!')
         } else {

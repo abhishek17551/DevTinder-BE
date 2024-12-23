@@ -37,21 +37,23 @@ app.post("/signup", async (req,res)=>{
     }
 })  
 
-app.post("/login", async (req,res) => {
+app.post("/login", async (req,res) => { 
     try {
         const {emailId,password} = req.body
 
         //Check if email exists
-        const loggedInUser = await User.findOne({emailId : emailId})
+        const signedInUser = await User.findOne({emailId : emailId})
 
-        if(!loggedInUser){
-            throw new Error('Invalid Credentials!')
+        if(!signedInUser){
+            throw new Error('Please Sign Up!')
         }
 
-        const isPasswordValid = await bcrypt.compare(password,loggedInUser.password)
+        const isPasswordValid = await user.validatePassword(password)
+
         if(isPasswordValid) {
             //After successful login, encode jwt token & set cookie 
-            const token = await jwt.sign({_id:loggedInUser._id},"Abhi$hek@1029",{expiresIn : "5h"})
+            const token = await user.createJWT()
+
             res.cookie("token",token,{expires : new Date(Date.now() + 8*3600000)})
 
             res.send('Login Successful!')

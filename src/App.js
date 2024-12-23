@@ -4,7 +4,6 @@ const User = require('./models/user')
 const bcrypt = require("bcrypt")
 const { validateSignupData } = require('./utils/validation')
 const cookieParser = require('cookie-parser')
-const jwt  = require('jsonwebtoken')
 const { userAuth } = require('./middlewares/auth')
 const app = express()
 

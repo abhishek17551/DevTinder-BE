@@ -4,7 +4,8 @@ const User = require('./models/user')
 const bcrypt = require("bcrypt")
 const { validateSignupData } = require('./utils/validation')
 const cookieParser = require('cookie-parser')
-const { jwt } = require('jsonwebtoken')
+const jwt  = require('jsonwebtoken')
+const { userAuth } = require('./middlewares/auth')
 const app = express()
 
 //Applies to all requests to express server
@@ -51,7 +52,7 @@ app.post("/login", async (req,res) => {
         if(isPasswordValid) {
             //After successful login, encode jwt token & set cookie 
             const token = await jwt.sign({_id:loggedInUser._id},"Abhi$hek@1029")
-            res.cookies("token",token)
+            res.cookie("token",token)
 
             res.send('Login Successful!')
         } else {
@@ -64,26 +65,9 @@ app.post("/login", async (req,res) => {
 })
 
 //Get User Profile
-app.get("/profile", async (req,res) => {
+app.get("/profile",userAuth, async (req,res) => {
  try {
-    //Receive token
-    const cookies = req.cookies
-    const {token} = cookies
-
-    if(!token){
-        throw new Error('Invalid Token')
-    }
-
-    //Decode token
-    const decodedMessage = await jwt.verify(token,"Abhi$hek@1029")
-    const {_id} = decodedMessage;
-    
-    //Get user details based on token
-    const user = await User.findById(_id)
-
-    if(!user) {
-        throw new Error("User does not exist")
-    }
+    const user = req.user 
     res.send(user)
  }
  catch(err){
@@ -91,37 +75,7 @@ app.get("/profile", async (req,res) => {
 }
 })
 
-//Get user by emailId
-app.get('/user', async (req,res) => {
-    const userEmail = req.body.emailId
 
-    try {
-        const user = await User.findOne({emailId:userEmail})
-        if(!user){
-            res.status(404).send("User not found")
-        } else {
-            res.send(user)
-        }
-    }
-    catch(err){
-        res.status(400).send('Something went wrong!!!')
-    }
-})
-
-//Delete user by ID
-app.delete('/user', async (req,res) => {
-    const userId = req.body.userId
-    try {
-        const user = await User.findByIdAndDelete({_id : userId})
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
-        res.send('User deleted successfully!!!')
-    }
-    catch(err){
-        res.status(400).send('Something went wrong!!!')
-    }
-})
 
 //Update user by ID
 app.patch('/user/:userId', async (req,res) => {
@@ -148,15 +102,7 @@ app.patch('/user/:userId', async (req,res) => {
     }
 })
 
-//Get all feed
-app.get('/feed', async (req,res) => {
-    try {
-        const users = await User.find({})
-        res.send(users)
-    }    catch(err){
-        res.status(400).send('Something went wrong!!!')
-    }
-})
+
 
 
 

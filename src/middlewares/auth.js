@@ -1,26 +1,33 @@
-const adminAuth = (req,res,next) => {
-    console.log('Admin auth is getting checked')
-    const token = 'firestorm1'
-    const isAdminAuthorized = token === 'firestorm'
-    if(!isAdminAuthorized){
-        res.status(401).send("Unauthorized request")
+const jwt= require("jsonwebtoken")
+const User = require("../models/user")
+
+
+const userAuth = async (req,res,next) => {
+
+    try {
+        //Receive token
+        const {token} = req.cookies
+        if(!token) {
+            throw new Error ("Token is not valid")
+        }
+        //Decode token
+        const decodedObj = await jwt.verify(token,"Abhi$hek@1029")
+        const {_id} = decodedObj
+        //Get user details based on token
+        const user = await User.findById(_id)
+    
+        if(!user) {
+            throw new Error("User not found")
+        }
+        //Send user details
+        next();
+        req.user = user
     }
-    else {
-        next()
+    catch(err) {
+        res.status(400).send("ERROR : "+ err.message)
     }
+
 }
 
-const userAuth = (req,res,next) => {
-    console.log('User auth is getting checked')
-    const token = 'firestorm'
-    const isAdminAuthorized = token === 'firestorm'
-    if(!isAdminAuthorized){
-        res.status(401).send("Unauthorized request")
-    }
-    else {
-        next()
-    }
-}
 
-
-module.exports = {adminAuth,userAuth}
+module.exports = {userAuth}

@@ -8,10 +8,10 @@ const ConnectionRequest = require('../middlewares/connectionRequest')
 
 requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req,res) => {
     try {
-        const fromUserId = req.body._id
+        const fromUserId = req.user._id
         const toUserId = req.params.toUserId
         const status = req.params.status
-    
+
         const allowedStatus = ['interested','ignored']
     
         if(!allowedStatus.includes(status)){

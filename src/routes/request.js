@@ -3,7 +3,7 @@ const requestRouter = express.Router()
 
 const { userAuth } = require('../middlewares/auth')
 const User = require('../models/user')
-const ConnectionRequest = require('../middlewares/connectionRequest')
+const ConnectionRequest = require('../models/connectionRequest')
 
 
 requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req,res) => {

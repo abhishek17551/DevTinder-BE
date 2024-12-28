@@ -57,12 +57,12 @@ userRouter.get("/user/connections", userAuth, async (req,res) => {
     }
 })
 
-//Get feed for a user
+//Get feed for an user
 userRouter.get("/feed", userAuth, async (req,res) => {
     try {
         const loggedInUser = req.user
 
-        //Sent/Received connection requests
+        //Sent & Received connection requests
         const connectionRequests = await ConnectionRequest.find({
             $or : [
                 {fromUserId : loggedInUser._id}, {toUserId : loggedInUser._id}
@@ -70,6 +70,7 @@ userRouter.get("/feed", userAuth, async (req,res) => {
         }).select("fromUserId toUserId")
 
         const usersNotOnFeed = new Set();
+
         connectionRequests.forEach((req) => {
             usersNotOnFeed.add(req.fromUserId.toString())
             usersNotOnFeed.add(req.toUserId.toString())
@@ -78,13 +79,13 @@ userRouter.get("/feed", userAuth, async (req,res) => {
         const users = await User.find({
             $and : [
                 {_id : {$nin : Array.from(usersNotOnFeed)}},
-                {_id : loggedInUser._id}
+                {_id : {$ne : loggedInUser._id}}
             ]
-        })
+        }).select(detailsArray)
 
         res.json({
             data : users
-        }).select(detailsArray)
+        })
         
     }
     catch (err) {

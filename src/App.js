@@ -1,13 +1,19 @@
 const express = require('express')
 const connectDB = require('./config/database')
 const cookieParser = require('cookie-parser')
+const cors = require('cors')
 
 const app = express()
 
 //Applies to all requests to express server
 //Converts JSON requests on server to JS readable objects  
+app.use(cors({
+  origin : "http://localhost:5174",
+  credentials : true
+}))
 app.use(express.json())
 app.use(cookieParser())
+
 
 
 const authRouter = require('./routes/auth')

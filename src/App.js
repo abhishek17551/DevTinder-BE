@@ -8,7 +8,7 @@ const app = express()
 //Applies to all requests to express server
 //Converts JSON requests on server to JS readable objects  
 app.use(cors({
-  origin : "http://localhost:5174",
+  origin : "http://localhost:5173",
   credentials : true
 }))
 app.use(express.json())
